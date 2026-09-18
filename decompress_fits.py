@@ -113,7 +113,7 @@ if __name__ == "__main__":
         
         # If a detector is specified, check the header for the detector information
         if args.detector:
-            detector_in_header = hdulist[0].header.get('DETECTOR', '').strip()
+            detector_in_header = hdulist[1].header.get('DETECTOR', '').strip()
             if args.detector not in detector_in_header:
                 print(f"Warning: Detector mismatch for file {f}. Expected '{args.detector}', found '{detector_in_header}', skipping")
                 continue
