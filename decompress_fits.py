@@ -77,6 +77,8 @@ if __name__ == "__main__":
                         help='Directory to save decompressed files (default: same as input)')
     parser.add_argument('--crop', type=int, nargs=3, metavar=('center_x', 'center_y', 'width'),
                         help='Crop the image data to the specified pixel range')
+    parser.add_argument('--detector', type=str, default=None,
+                        help='Specify the detector used for the FITS files, e.g. "VCAM1 - OrcaQ   "')
 
     args = parser.parse_args()
 
@@ -108,6 +110,14 @@ if __name__ == "__main__":
         print(f"Decompressing file: {f}")
         data_dir = os.path.dirname(f)
         hdulist = read_fits_file(f)
+        
+        # If a detector is specified, check the header for the detector information
+        if args.detector:
+            detector_in_header = hdulist[0].header.get('DETECTOR', '').strip()
+            if args.detector not in detector_in_header:
+                print(f"Warning: Detector mismatch for file {f}. Expected '{args.detector}', found '{detector_in_header}', skipping")
+                continue
+        
         new_hdulist = decompress_fits(hdulist)
         
         assert len(new_hdulist) == 2, "Unexpected number of HDUs in decompressed file."
